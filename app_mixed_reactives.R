@@ -12,7 +12,7 @@ eval(library_code)
 data_code <- quote({
 
   # Patient listing
-  adsl <- list(
+  pat_data <- list(
     SUBJID = 1:100,
     STUDYID = c(rep(1, 20), rep(2, 50), rep(3, 30)),
     AGE = sample(20:88, 100, replace = T) %>% as.numeric(),
@@ -20,7 +20,7 @@ data_code <- quote({
   ) %>% as_tibble()
 
   # Days where Overall Survival (OS), Event free survival (EFS) and Progression Free Survival (PFS) happened
-  adtte <- list(
+  event_data <- list(
     SUBJID = rep(1:100, 3),
     STUDYID = rep(c(rep(1, 20), rep(2, 50), rep(3, 30)), 3),
     PARAMCD = c(rep("OS", 100), rep("EFS", 100), rep("PFS", 100)),
@@ -68,9 +68,9 @@ server <- function(input, output) {
 
   # Create the dataset by merging the two tables per patient
   data_set_reactive <- metaReactive({
-    adtte_filtered <- adtte %>% dplyr::filter(PARAMCD == !!input$filter_param)
-    ads_selected <- adsl %>% dplyr::select(dplyr::one_of(c(!!input$select_regressor, c("SUBJID", "STUDYID"))))
-    merge(ads_selected, adtte_filtered, by = c("SUBJID", "STUDYID"))
+    event_data_filtered <- event_data %>% dplyr::filter(PARAMCD == !!input$filter_param)
+    ads_selected <- pat_data %>% dplyr::select(dplyr::one_of(c(!!input$select_regressor, c("SUBJID", "STUDYID"))))
+    merge(ads_selected, event_data_filtered, by = c("SUBJID", "STUDYID"))
   })
 
   # Create a pure reactive to create the formula shown in the linear model
