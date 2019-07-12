@@ -66,7 +66,9 @@ formula_reactive <- reactive({
   })
 ```
 
-**surprisingly**  it worked
+**surprisingly** it worked and the R Code looks nice
+
+![RCode in App](rcode.png)
 
 ## Acknowledgements
 
