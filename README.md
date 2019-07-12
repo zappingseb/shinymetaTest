@@ -36,7 +36,7 @@ though produces some ugly code
 formula_reactive <- stats::as.formula(paste("AVAL", paste("AGE", collapse = " + "), sep = " ~ "))
 ```
 
-I just wanted to see the outcome of this in my reproducible code. Therefore I tried to use
+I just wanted to see the outcome of this in my reproducible code. So e.g. `AVAL ~ AGE`. Therefore I tried to use
 a standard `shiny::reactive` instead of a `metaReactive` in the second app `app_mixed_reactives.R`:
 
 ```r
