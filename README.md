@@ -18,8 +18,10 @@ This repo contains two apps that try using the new [shinymeta](https://github.co
 
 ## Why reproducibility?
 
-The example shown here contains an analysis that could be performed for a clinical study. Maybe
-someone wants to see different plots for different events and just take the best one into a
+The example shown here is a typical analysis in clinical studies. Though the data is totally randomized.
+
+For the clinical study the biostatistician wants to see different plots for different events. He wants
+to take the one with the highest impact into the
 study report. This study report will be send to authorities like [**FDA**](https://en.wikipedia.org/wiki/Food_and_Drug_Administration). The **FDA** would like to see how
 the plot was produced and which data went in. The reproducibility feature would allow the **FDA**
 to create the plot themselves by having the app or the report + code.
