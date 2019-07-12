@@ -1,9 +1,10 @@
 # shinymeta - my first try
 
+Trying a multi output shiny app with reproducibility by [shinymeta](https://github.com/rstudio/shinymeta)
 
 ## App example
 
-This repo contains two apps that try using the new shinymeta package. The apps basically
+This repo contains two apps that try using the new [shinymeta](https://github.com/rstudio/shinymeta) package. The apps basically
 
 1. `Filter` one data set (`event_data`)
 2. `Select` a second data set (`pat_data`)
