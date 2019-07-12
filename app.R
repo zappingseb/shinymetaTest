@@ -78,15 +78,15 @@ server <- function(input, output) {
     validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
     metaExpr({
-      stats::as.formula(
-        paste(
-          "AVAL",
+      !!stats::as.formula(
           paste(
-            !!input$select_regressor,
-            collapse = " + "
-          ),
-          sep = " ~ "
-        )
+              "AVAL",
+              paste(
+                  sapply(input$select_regressor, as.symbol),
+                  collapse = " + "
+              ),
+              sep = " ~ "
+          )
       )
     })
   })
