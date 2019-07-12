@@ -16,6 +16,14 @@ This repo contains two apps that try using the new [shinymeta](https://github.co
 
 ![App screenshot](./example_app.png)
 
+## Installation
+
+get shinymeta from github by
+
+```r
+devtools::install_github("rstudio/shinymeta")
+```
+
 ## Why reproducibility?
 
 The example shown here is a typical analysis in clinical studies. Though the data is totally randomized.
