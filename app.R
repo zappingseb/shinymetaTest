@@ -13,19 +13,19 @@ data_code <- quote({
 
   # Patient listing
   pat_data <- list(
-    SUBJID = 1:100,
-    STUDYID = c(rep(1, 20), rep(2, 50), rep(3, 30)),
-    AGE = sample(20:88, 100, replace = T) %>% as.numeric(),
-    SEX = sample(c("M", "F", "U"), 100, replace = T) %>% as.factor()
+      SUBJID = 1:200,
+      STUDYID = c(rep(1, 40), rep(2, 100), rep(3, 60)),
+      AGE = sample(20:88, 200, replace = T) %>% as.numeric(),
+      SEX = c(sample(c("M", "F"), 180, replace = T), rep("U", 20)) %>% as.factor()
   ) %>% as_tibble()
 
   # Days where Overall Survival (OS), Event free survival (EFS) and Progression Free Survival (PFS) happened
   event_data <- list(
-    SUBJID = rep(1:100, 3),
-    STUDYID = rep(c(rep(1, 20), rep(2, 50), rep(3, 30)), 3),
-    PARAMCD = c(rep("OS", 100), rep("EFS", 100), rep("PFS", 100)),
-    AVAL = c(rexp(100, 1 / 100), rexp(100, 1 / 80), rexp(100, 1 / 60)) %>% as.numeric(),
-    AVALU = rep("DAYS", 300) %>% as.factor()
+      SUBJID = rep(1:200, 3),
+      STUDYID = rep(c(rep(1, 40), rep(2, 100), rep(3, 60)), 3),
+      PARAMCD = c(rep("OS", 200), rep("EFS", 200), rep("PFS", 200)),
+      AVAL = c(rexp(200, 1 / 100), rexp(200, 1 / 80), rexp(200, 1 / 60)) %>% as.numeric(),
+      AVALU = rep("DAYS", 600) %>% as.factor()
   ) %>% as_tibble()
 })
 
@@ -67,7 +67,7 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   # Create the dataset by merging the two tables per patient
-  data_set_reactive <- metaReactive({
+  data_set_reactive <- metaReactive(bindToReturn = TRUE, {
     event_data_filtered <- event_data %>% dplyr::filter(PARAMCD == !!input$filter_param)
     ads_selected <- pat_data %>% dplyr::select(dplyr::one_of(c(!!input$select_regressor, c("SUBJID", "STUDYID"))))
     merge(ads_selected, event_data_filtered, by = c("SUBJID", "STUDYID"))
@@ -96,7 +96,7 @@ server <- function(input, output) {
     validate(need(is.data.frame(data_set_reactive()), "Data Set could not be created"))
     validate(need(is.language(formula_reactive()), "Formula could not be created from column selections"))
 
-    metaExpr({
+    metaExpr(bindToReturn = TRUE, {
       model_data <- !!data_set_reactive()
       lm(formula = !!formula_reactive(), data = model_data)
     })

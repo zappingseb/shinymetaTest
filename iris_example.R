@@ -30,8 +30,9 @@ server <- function(input, output) {
   model <- metaReactive2({
         validate(need(is.data.frame(data()), "Data Set could not be created"))
 
-        metaExpr({
-              lm(formula = Sepal.Length ~ Sepal.Width, data = !!data())
+        metaExpr(bindToReturn = TRUE, {
+              data <- !!data()
+              lm(formula = Sepal.Length ~ Sepal.Width, data = data)
             })
       })
 
