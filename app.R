@@ -4,6 +4,7 @@ library_code <- quote({
   library(shinymeta)
   library(tibble)
   library(dplyr)
+  library(rlang)
 })
 
 eval(library_code)
@@ -78,15 +79,9 @@ server <- function(input, output) {
     validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
     metaExpr({
-      !!stats::as.formula(
-          paste(
-              "AVAL",
-              paste(
-                  sapply(input$select_regressor, as.symbol),
-                  collapse = " + "
-              ),
-              sep = " ~ "
-          )
+      !!rlang::new_formula(
+          sym("AVAL"),
+          Reduce(f = function(x, y) call("+", x, y), x = syms(input$select_regressor))
       )
     })
   })
