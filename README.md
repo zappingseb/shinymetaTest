@@ -41,7 +41,7 @@ to create the plot themselves by having the app or the report + code.
 though produces some ugly code
 
 ```r
-formula_reactive <- stats::as.formula(paste("AVAL", paste("AGE", collapse = " + "), sep = " ~ "))
+formula_reactive <- AVAL ~ AGE
 ```
 
 I just wanted to see the outcome of this in my reproducible code. So e.g. `AVAL ~ AGE`. Therefore I tried to use
@@ -51,7 +51,8 @@ a standard `shiny::reactive` instead of a `metaReactive` in the second app `app_
 formula_reactive <- reactive({
     validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
-    stats::as.formula(paste("AVAL", paste(input$select_regressor, collapse = " + "), sep = " ~ "))
+    regressors <- Reduce(function(x, y) call("+", x, y), rlang::syms(input$select_regressor))
+    rlang::new_formula(rlang::sym("AVAL"), regressors)
   })
 
   # Create a linear model

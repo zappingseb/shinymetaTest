@@ -80,7 +80,8 @@ server <- function(input, output) {
   formula_reactive <- reactive({
     validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
-    stats::as.formula(paste("AVAL", paste(input$select_regressor, collapse = " + "), sep = " ~ "))
+    regressors <- Reduce(function(x, y) call("+", x, y), rlang::syms(input$select_regressor))
+    rlang::new_formula(rlang::sym("AVAL"), regressors)
   })
 
   # Create a linear model

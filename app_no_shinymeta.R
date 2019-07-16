@@ -3,7 +3,7 @@ library(shiny)
 library(shinymeta)
 library(tibble)
 library(dplyr)
-
+library(rlang)
 
 # Data construction (random data for a clinical study)
 
@@ -62,16 +62,8 @@ server <- function(input, output) {
   model_reactive <- reactive({
         validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
-        formula_value <- stats::as.formula(
-            paste(
-                "AVAL",
-                paste(
-                    sapply(input$select_regressor, as.symbol),
-                    collapse = " + "
-                ),
-                sep = " ~ "
-            )
-        )
+        regressors <- Reduce(function(x, y) call("+", x, y), rlang::syms(input$select_regressor))
+        formula_value <- rlang::new_formula(rlang::sym("AVAL"), regressors)
 
         event_data_filtered <- event_data %>% dplyr::filter(PARAMCD == input$filter_param)
         ads_selected <- pat_data %>% dplyr::select(dplyr::one_of(c(input$select_regressor, c("SUBJID", "STUDYID"))))

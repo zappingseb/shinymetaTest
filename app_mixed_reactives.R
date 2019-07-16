@@ -4,6 +4,7 @@ library_code <- quote({
   library(shinymeta)
   library(tibble)
   library(dplyr)
+  library(rlang)
 })
 
 eval(library_code)
@@ -67,7 +68,7 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   # Create the dataset by merging the two tables per patient
-  data_set_reactive <- metaReactive({
+  data_set_reactive <- metaReactive(bindToReturn = TRUE, {
     event_data_filtered <- event_data %>% dplyr::filter(PARAMCD == !!input$filter_param)
     ads_selected <- pat_data %>% dplyr::select(dplyr::one_of(c(!!input$select_regressor, c("SUBJID", "STUDYID"))))
     merge(ads_selected, event_data_filtered, by = c("SUBJID", "STUDYID"))
@@ -77,7 +78,9 @@ server <- function(input, output) {
   formula_reactive <- reactive({
     validate(need(is.character(input$select_regressor), "Cannot work without selected column"))
 
-    stats::as.formula(paste("AVAL", paste(input$select_regressor, collapse = " + "), sep = " ~ "))
+    regressors <- Reduce(function(x, y) call("+", x, y), rlang::syms(input$select_regressor))
+    rlang::new_formula(rlang::sym("AVAL"), regressors)
+
   })
 
   # Create a linear model
@@ -85,7 +88,7 @@ server <- function(input, output) {
     validate(need(is.data.frame(data_set_reactive()), "Data Set could not be created"))
     validate(need(is.language(formula_reactive()), "Formula could not be created from column selections"))
 
-    metaExpr({
+    metaExpr(bindToReturn = TRUE, {
       model_data <- !!data_set_reactive()
       lm(formula = !!formula_reactive(), data = model_data)
     })
