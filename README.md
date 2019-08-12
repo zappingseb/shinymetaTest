@@ -71,6 +71,3 @@ formula_reactive <- reactive({
 
 ![RCode in App](rcode.png)
 
-## Acknowledgements
-
-My current project is in the team Adrian Waddell (@waddella). He was inspiring the over-overarching metaprogramming approach in shinymeta. This encouraged me to try out `shinymeta`.
